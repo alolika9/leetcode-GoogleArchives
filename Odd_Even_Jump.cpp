@@ -102,39 +102,74 @@ public:
         
         int n = arr.size();
         int good=0;
+        vector <bool> can_odd(n, false);
+        vector <bool> can_even(n, false);
+        can_odd[n-1]=true;
+        can_even[n-1]=true;
+        vector<int> goodIndex;
+        bool visited=false;
         for(int i=0;i<n;i++){
             int j = i;
+            bool visited=false;
             cout<<j<<"\n";
+            goodIndex.push_back(j);
             int jump_counter = 1;
             while(j!=n-1){
                 cout<<jump_counter<<"\n";
                 if(jump_counter%2==0){
+                    if(can_even[j]==true){
+                        cout<<"can_even at "<<j<<"is true.\n";
+                        visited = true;
+                        break;
+                    }
                     int next_jump = evenJump(arr,j);
                     cout<<next_jump<<"\n";
                     if(next_jump==-1){
                         break;
                     }
                     else{
+                        goodIndex.push_back(next_jump);
                         j=next_jump;
                         jump_counter++;
                     }
                 }
                 else{
+                    if(can_odd[j]==true){
+                        cout<<"can_odd at "<<j<<"is true.\n";
+                        visited = true;
+                        break;
+                    }
                     int next_jump = oddJump(arr,j);
                     cout<<next_jump<<"\n";
                     if(next_jump==-1){
                         break;
                     }
                     else{
+                        goodIndex.push_back(next_jump);
                         j=next_jump;
                         jump_counter++;
                     }
                 }
             }
-            if(j==n-1){
+            if(j==n-1 || visited==true){
                 good++;
+                if(j==n-1){
+                    // jump_counter--;
+                    while(jump_counter>0 && !goodIndex.empty()){
+                        int t = goodIndex.back();
+                        goodIndex.pop_back();
+                        if(jump_counter%2==0){
+                            can_even[t]=true;
+                        }
+                        else{
+                            can_odd[t]=true;
+                        }
+                        jump_counter--;
+                    }
+                }
                 cout<<"Good Start\n";
             }
+            goodIndex.clear();
             cout<<"Next Start\n";
         }
         return good;
